@@ -11,8 +11,12 @@
         navigator.geolocation.getCurrentPosition(
           position => {
             // 发送位置数据到 React Native
-            console.log(position);
-            window.ReactNativeWebView.postMessage(JSON.stringify({...position, test: 'test message'}));
+            console.log('Position received:', position);
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              test: 'test message'
+            }));
           },
           error => {
             // 发送错误信息到 React Native
