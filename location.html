@@ -17,6 +17,7 @@
     }
 
     function onMessage(data){
+        console.log(data)
         let event = JSON.parse(data);
           switch (event.event) {
             case "getPosition":
