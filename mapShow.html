@@ -1,90 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mapShow</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <title>test</title>
     <style>
-        body {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          margin: 0;
+        html,
+        body,
+        #mapContainer {
+            width: 100%;
+            height: 100%;
         }
-        iframe {
-          width: 100%;
-          height: 100%;
+
+        .custom-content-marker {
+            position: relative;
+            width: 25px;
+            height: 34px;
         }
-        * {
-          margin: 0;
-          padding: 0;
+
+        .custom-content-marker img {
+            width: 100%;
+            height: 100%;
         }
-      </style>
-    <!-- URL: https://m.amap.com/navi/?dest=115.482989,38.813949&destName=您&hideRouteIcon=1&key=（您的Key）&jscode=（您的安全密钥） -->
-    <!-- <script src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2"></script> -->
+
+        .custom-content-marker .close-btn {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            width: 15px;
+            height: 15px;
+            font-size: 12px;
+            background: #ccc;
+            border-radius: 50%;
+            color: #fff;
+            text-align: center;
+            line-height: 15px;
+            box-shadow: -1px 1px 1px rgba(10, 10, 10, .2);
+        }
+        .custom-content-marker .close-btn:hover {
+            background: #666;
+        }
+        .amap-marker-label{
+            border: 0;
+            background-color: transparent;
+        }
+
+        .info{
+            background-color: #fff;
+            padding: 5px 10px;
+            border-radius: 3px;
+            position: relative;
+            margin:0;
+            top: 0;
+            right: 0;
+            min-width: 0;
+        }
+    </style>
+    <script
+        src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar"></script>
+    <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
+    <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
 </head>
+
 <body>
-    <iframe
-    id="test"
-    src=""
-  ></iframe>
-  
-  <script>
-    (async function() {
-      // 定义原始经纬度（假设是 GPS 坐标）
-      let latitude = '38.813949';
-      let longitude = '115.482989';
-  
-      // 更新经纬度值
-      latitude = '38.813949';
-      longitude = '115.482989';
-  
-      // 构造高德地图 API 的 URL，用于坐标转换
-      const covertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
-  
-      // 请求高德地图 API 进行坐标转换
-      try {
-        const response = await fetch(covertUrl);
-        console.log(response);
-        
-        const resJson = await response.json();
-        const { locations } = resJson;
-        
-        // 确保转换成功
-        if (locations) {
-          [longitude, latitude] = locations.split(',');
-        } else {
-          console.error("坐标转换失败，使用原始坐标。");
+    <div id="mapContainer"></div>
+    <script>
+        function getCurrentPosition(options) {
+            return new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, options);
+            });
         }
-      } catch (err) {
-        console.error("请求坐标转换API失败:", err);
-      }
-  
-      // 构造 URL
-      const url = `https://m.amap.com/navi/?dest=${longitude},${latitude}&destName=您&hideRouteIcon=1&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&jscode=587bb7c81a85b856287d943d4b9f0981`;
-  
-      // 设置 iframe 的 src 属性
-      const iframe = document.getElementById("test");
-      iframe.src = url;
-  
-      // 在 iframe 加载完成后，发送消息
-      iframe.onload = function() {
-        // iframe.contentWindow.postMessage("hello", "https://m.amap.com/picker/");
-      };
-  
-      // 监听消息
-    //   window.addEventListener(
-    //     "message",
-    //     function(e) {
-    //       // 处理接收到的消息
-    //       console.log("Received message:", e.data);
-    //     },
-    //     false
-    //   );
-    })();
-  </script>
-  
+        (async function () {
+            var scale = new AMap.Scale(),
+                toolBar = new AMap.ToolBar({
+                    position: {
+                        top: '110px',
+                        right: '40px'
+                    }
+                }),
+                overView = new AMap.HawkEye({
+                    opened: false
+                });
+
+            let latitude;
+            let longitude;
+
+            try {
+                const position = await getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 20000,
+                    maximumAge: 1000
+                });
+
+                // 更新外部作用域的变量
+                // latitude = position.coords.latitude;
+                // longitude = position.coords.longitude;
+                console.log(latitude, longitude);
+                latitude = '38.813949';
+                longitude = '115.482989';
+
+
+                const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
+
+                try {
+                    const response = await fetch(convertUrl);
+                    const resJson = await response.json();
+                    const { locations } = resJson;
+                    if (locations) {
+                        [longitude, latitude] = locations.split(',');
+                    } else {
+                        console.error("坐标转换失败，使用原始坐标。");
+                    }
+                } catch (err) {
+                    console.error("请求坐标转换API失败:", err);
+                }
+
+                const map = new AMap.Map('mapContainer', {
+                    viewMode: '2D',
+                    zoom: 16,
+                    center: [longitude, latitude],
+                });
+
+                var circle = new AMap.Circle({
+                    center: [longitude, latitude],
+                    radius: 1000, //半径
+                    borderWeight: 3,
+                    strokeOpacity: 1,
+                    strokeWeight: 6,
+                    strokeOpacity: 0.2,
+                    fillOpacity: 0.4,
+                    fillColor: '#1791fc',
+                    zIndex: 50,
+                });
+
+                map.add(circle);
+                map.addControl(scale);
+                map.addControl(toolBar);
+                map.addControl(overView);
+                var markerContent = 
+                    '<div class="custom-content-marker">' +
+                    '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
+                    
+                    '</div>';
+                var marker = new AMap.Marker({
+                    position: [longitude, latitude],
+                    // 将 html 传给 content
+                    content: markerContent,
+                    // 以 icon 的 [center bottom] 为原点
+                    offset: new AMap.Pixel(-13, -30),
+                    title:'位置'
+                });
+                map.add(marker);
+                marker.setLabel({
+                    direction: 'top',
+                    offset: new AMap.Pixel(0, 0),  //设置文本标注偏移量
+                    content: "<div class='info'>您</div>", //设置文本标注内容
+                });
+                map.on("complete", function () {
+                    log.success("地图加载完成！");
+                });
+
+            } catch (error) {
+                console.error("无法获取当前位置:", error.message);
+            }
+        })();
+
+    </script>
 </body>
+
 </html>
