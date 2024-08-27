@@ -40,27 +40,45 @@
             line-height: 15px;
             box-shadow: -1px 1px 1px rgba(10, 10, 10, .2);
         }
+
         .custom-content-marker .close-btn:hover {
             background: #666;
         }
-        .amap-marker-label{
+
+        .amap-marker-label {
             border: 0;
             background-color: transparent;
         }
 
-        .info{
-            background-color: #fff;
-            padding: 5px 10px;
+        .info {
+            background-color: #ffd8d8;
+            padding: 2px 2px;
             border-radius: 3px;
             position: relative;
-            margin:0;
+            margin: 0;
             top: 0;
             right: 0;
             min-width: 0;
         }
+
+        .info1 {
+            background-color: #509db5;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 10px;
+            position: relative;
+            margin: 0;
+            top: 0;
+            right: 0;
+            min-width: 0;
+        }
+
+        .info img {
+            width: 60px;
+        }
     </style>
     <script
-        src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar"></script>
+        src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar,AMap.MarkerClusterer"></script>
     <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
 </head>
@@ -73,12 +91,13 @@
                 navigator.geolocation.getCurrentPosition(resolve, reject, options);
             });
         }
+
         (async function () {
             var scale = new AMap.Scale(),
                 toolBar = new AMap.ToolBar({
                     position: {
                         top: '110px',
-                        right: '40px'
+                        right: '10px'
                     }
                 }),
                 overView = new AMap.HawkEye({
@@ -94,11 +113,12 @@
                     timeout: 20000,
                     maximumAge: 1000
                 });
+                console.log(position);
 
                 // 更新外部作用域的变量
                 // latitude = position.coords.latitude;
                 // longitude = position.coords.longitude;
-                console.log(latitude, longitude);
+                // console.log(latitude, longitude);
                 latitude = '38.813949';
                 longitude = '115.482989';
 
@@ -111,6 +131,8 @@
                     const { locations } = resJson;
                     if (locations) {
                         [longitude, latitude] = locations.split(',');
+                        console.log('转换后的坐标:', latitude, longitude);
+
                     } else {
                         console.error("坐标转换失败，使用原始坐标。");
                     }
@@ -120,44 +142,177 @@
 
                 const map = new AMap.Map('mapContainer', {
                     viewMode: '2D',
-                    zoom: 16,
+                    zoom: 14.5,
                     center: [longitude, latitude],
                 });
 
                 var circle = new AMap.Circle({
                     center: [longitude, latitude],
-                    radius: 1000, //半径
-                    borderWeight: 3,
+                    radius: 2000, //半径
+                    borderWeight: 1,
                     strokeOpacity: 1,
                     strokeWeight: 6,
                     strokeOpacity: 0.2,
-                    fillOpacity: 0.4,
-                    fillColor: '#1791fc',
+                    fillOpacity: 0.5,
+                    fillColor: '#bad9ff',
                     zIndex: 50,
                 });
-
+                let list = [
+                    {
+                        _id: 1,
+                        houseName: '房源1',
+                        houseAddress: '地址1',
+                        latitude: 38.821458,
+                        longitude: 115.494892,
+                        price: 1000,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DN.img?w=768&h=489&m=6',
+                        weight: 8,
+                        lnglat: ["115.494892", "38.821458"]
+                    },
+                    {
+                        _id: 2,
+                        houseName: '房源2',
+                        houseAddress: '地址2',
+                        latitude: 38.806724,
+                        longitude: 115.469305,
+                        price: 2000,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DS.img?w=705&h=427&m=6',
+                        weight: 6,
+                        lnglat: ["115.469305", "38.806724"]
+                    },
+                    {
+                        _id: 3,
+                        houseName: '房源3',
+                        houseAddress: '地址3',
+                        latitude: 38.802145,
+                        longitude: 115.491732,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1psbUu.img?w=768&h=434&m=6',
+                        weight: 7,
+                        lnglat: ["115.491732", "38.802145"]
+                    },
+                    {
+                        _id: 4,
+                        houseName: '房源4',
+                        houseAddress: '地址4',
+                        latitude: 38.819374,
+                        longitude: 115.484915,
+                        price: 3000,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xk.img?w=743&h=476&m=6',
+                        weight: 8,
+                        lnglat: ["115.484915", "38.819374"]
+                    },
+                    {
+                        _id: 5,
+                        houseName: '房源5',
+                        houseAddress: '地址5',
+                        latitude: 38.810247,
+                        longitude: 115.477670,
+                        price: 4000,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1prVXu.img?w=768&h=429&m=6',
+                        weight: 9,
+                        lnglat: ["115.477670", "38.810247"]
+                    },
+                    {
+                        _id: 6,
+                        houseName: '房源6',
+                        houseAddress: '地址6',
+                        latitude: 38.823547,
+                        longitude: 115.477570,
+                        price: 5000,
+                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6',
+                        weight: 10,
+                        lnglat: ["115.477570", "38.823547"]
+                    }
+                ]
                 map.add(circle);
                 map.addControl(scale);
                 map.addControl(toolBar);
                 map.addControl(overView);
-                var markerContent = 
+                var markerContent =
                     '<div class="custom-content-marker">' +
                     '   <img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
-                    
                     '</div>';
                 var marker = new AMap.Marker({
                     position: [longitude, latitude],
                     // 将 html 传给 content
                     content: markerContent,
                     // 以 icon 的 [center bottom] 为原点
-                    offset: new AMap.Pixel(-13, -30),
-                    title:'位置'
+                    offset: new AMap.Pixel(-13, -30)
                 });
-                map.add(marker);
                 marker.setLabel({
                     direction: 'top',
                     offset: new AMap.Pixel(0, 0),  //设置文本标注偏移量
                     content: "<div class='info'>您</div>", //设置文本标注内容
+                });
+                map.add(marker);
+
+                let cluster
+                var gridSize = 60
+                var count = list.length;
+
+                var _renderClusterMarker = function (context) {
+                    var factor = Math.pow(context.count / count, 1 / 18);
+                    var div = document.createElement('div');
+                    var Hue = 180 - factor * 180;
+                    var bgColor = 'hsla(' + Hue + ',100%,40%,0.7)';
+                    var fontColor = 'hsla(' + Hue + ',100%,90%,1)';
+                    var borderColor = 'hsla(' + Hue + ',100%,40%,1)';
+                    var shadowColor = 'hsla(' + Hue + ',100%,90%,1)';
+                    div.style.backgroundColor = bgColor;
+                    var size = Math.round(30 + Math.pow(context.count / count, 1 / 5) * 20);
+                    div.style.width = div.style.height = size + 'px';
+                    div.style.border = 'solid 1px ' + borderColor;
+                    div.style.borderRadius = size / 2 + 'px';
+                    div.style.boxShadow = '0 0 5px ' + shadowColor;
+                    div.innerHTML = context.count;
+                    div.style.lineHeight = size + 'px';
+                    div.style.color = fontColor;
+                    div.style.fontSize = '14px';
+                    div.style.textAlign = 'center';
+
+                    context.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
+                    context.marker.setContent(div)
+                };
+
+                var _renderMarker = function (context) {
+                    var content = '<div style="background-color: hsla(180, 100%, 50%, 0.3); height: 18px; width: 18px; border: 1px solid hsl(180, 100%, 40%); border-radius: 12px; box-shadow: hsl(180, 100%, 50%) 0px 0px 3px;"></div>';
+                    var offset = new AMap.Pixel(-9, -9);
+                    context.marker.setContent(content)
+                    context.marker.setLabel({
+                        direction: 'top',
+                        offset: new AMap.Pixel(0, 0),
+                        content: `<div class='info1'><p>${context.data[0].houseName}</p></div>`,
+                    });
+                    context.marker.setOffset(offset)
+                }
+                // 创建聚合对象
+                var markers = list.map(item => {
+                    var marker1 = new AMap.Marker({
+                        position: [item.longitude, item.latitude],
+                    });
+                    marker1.setLabel({
+                        direction: 'top',
+                        offset: new AMap.Pixel(0, 0),
+                        content: `<div class='info1'><p>${item.houseName}</p></div>`,
+                    });
+                    return marker1;
+                });
+
+                if (cluster) {
+                    cluster.setMap(null); // 清除之前的聚合
+                }
+
+                // 添加聚合数据
+
+                cluster = new AMap.MarkerCluster(map, list, {
+                    gridSize: gridSize, // 设置网格像素大小,这里修改了
+                    renderClusterMarker: _renderClusterMarker, // 自定义聚合点样式
+                    renderMarker: _renderMarker, // 自定义非聚合点样式
+                });
+                cluster.on('click', function (event) {
+                    var markersInCluster = event.clusterData; // 获取聚合点中包含的所有标记
+                    console.log('聚合点中包含的标记内容:', markersInCluster);
+                    
                 });
                 map.on("complete", function () {
                     log.success("地图加载完成！");
