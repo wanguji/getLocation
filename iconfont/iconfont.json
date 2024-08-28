@@ -1,0 +1,23 @@
+{
+  "id": "4667453",
+  "name": "reactnative",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "4686545",
+      "name": "刷新",
+      "font_class": "shuaxin",
+      "unicode": "ec08",
+      "unicode_decimal": 60424
+    },
+    {
+      "icon_id": "5772882",
+      "name": "定位",
+      "font_class": "Location",
+      "unicode": "e61c",
+      "unicode_decimal": 58908
+    }
+  ]
+}
