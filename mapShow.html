@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <link rel="stylesheet" href="https://cache.amap.com/lbs/static/main1119.css" />
     <title>mapShow</title>
     <style>
         html,
@@ -98,7 +99,6 @@
         .info img {
             width: 60px;
         }
-
     </style>
     <script
         src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar,AMap.MarkerClusterer"></script>
@@ -110,15 +110,31 @@
 
 <body>
     <div id="mapContainer"></div>
-    <div class="input-card" style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 180px;">
+    <div class="input-card"
+        style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 180px;">
         <div id="pantoBtn">
             <i class="iconfont icon-Location"></i>
         </div>
     </div>
-    <div class="input-card" style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 230px;">
+    <div class="input-card"
+        style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 230px;">
         <div id="refresh">
             <i class="iconfont icon-shuaxin"></i>
         </div>
+    </div>
+    <div id="myPageTop">
+        <table>
+            <tr>
+                <td>
+                    <label>请输入关键字：</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="tipinput" />
+                </td>
+            </tr>
+        </table>
     </div>
     <script>
         function getCurrentPosition(options) {
@@ -136,10 +152,10 @@
                 maximumAge: 1000
             });
             console.log(position);
-            latitude = position.coords.latitude;
-            longitude = position.coords.longitude;
-            // latitude = '38.813949';
-            // longitude = '115.482989';
+            // latitude = position.coords.latitude;
+            // longitude = position.coords.longitude;
+            latitude = '38.813949';
+            longitude = '115.482989';
 
             const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
 
@@ -279,11 +295,31 @@
                         offset: new AMap.Pixel(0, -30),
                         closeWhenClickMap: true,
                     });
+                    //输入提示
+                    var autoOptions = {
+                        input: "tipinput"
+                    };
+
 
                     map.on("complete", function () {
 
                         console.log("地图加载完成！");
                     });
+                    if (AMap) {
+                        AMap.plugin(['AMap.PlaceSearch','AMap.AutoComplete'], function () {
+                            // 插件加载完成后的逻辑
+                            var auto = new AMap.AutoComplete(autoOptions);
+                            var placeSearch = new AMap.PlaceSearch({ map: map });
+                            auto.on("select", select);
+
+                            function select(e) {
+                                placeSearch.setCity(e.poi.adcode);
+                                placeSearch.search(e.poi.name);
+                            }
+                        });
+                    } else {
+                        console.error("AMap is not defined.");
+                    }
 
                 })
                 .catch(err => {
