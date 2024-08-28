@@ -188,20 +188,10 @@
                         cluster.setMap(null); // Clear previous clusters
                     }
 
-                    var markers = list.map(item => {
-                        var marker1 = new AMap.Marker({
-                            position: [item.longitude, item.latitude],
-                        });
-                        marker1.setLabel({
-                            direction: 'top',
-                            offset: new AMap.Pixel(0, 0),
-                            content: `<div class='info1'><p>${item.houseName}</p></div>`,
-                        });
-                        return marker1;
-                    });
+
 
                     // Add marker cluster
-                    cluster = new AMap.MarkerCluster(map, markers, {
+                    cluster = new AMap.MarkerCluster(map, list, {
                         gridSize: 60,
                         renderClusterMarker: function (context) {
                             var factor = Math.pow(context.count / list.length, 1 / 18);
