@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
-    <title>test</title>
+    <title>mapShow</title>
     <style>
         html,
         body,
@@ -66,11 +66,33 @@
             color: white;
             padding: 3px 10px;
             border-radius: 10px;
-            position: relative;
-            margin: 0;
-            top: 0;
-            right: 0;
-            min-width: 0;
+            text-align: center;
+            width: 60px;
+            overflow: hidden;
+            /*超出部分隐藏*/
+            white-space: nowrap;
+            /*禁止换行*/
+            text-overflow: ellipsis;
+            /*省略号*/
+        }
+
+        .contentName {
+            font-weight: bold;
+            width: 110px;
+            overflow: hidden;
+            /*超出部分隐藏*/
+            white-space: nowrap;
+            /*禁止换行*/
+            text-overflow: ellipsis;
+            /*省略号*/
+        }
+
+        .contentInline {
+            width: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-right: 20px;
         }
 
         .info img {
@@ -91,6 +113,14 @@
                 navigator.geolocation.getCurrentPosition(resolve, reject, options);
             });
         }
+        let list = []
+        document.addEventListener("message", function (event) {
+            const data = JSON.parse(event.data);
+            list = data.list; // 确保list获得数据
+            console.log("Received data in WebView:", list);
+            // 在 WebView 内部处理数据
+        });
+
 
         (async function () {
             var scale = new AMap.Scale(),
@@ -142,7 +172,7 @@
 
                 const map = new AMap.Map('mapContainer', {
                     viewMode: '2D',
-                    zoom: 14.5,
+                    zoom: 13.5,
                     center: [longitude, latitude],
                 });
 
@@ -157,73 +187,6 @@
                     fillColor: '#bad9ff',
                     zIndex: 50,
                 });
-                let list = [
-                    {
-                        _id: 1,
-                        houseName: '房源1',
-                        houseAddress: '地址1',
-                        latitude: 38.821458,
-                        longitude: 115.494892,
-                        price: 1000,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DN.img?w=768&h=489&m=6',
-                        weight: 8,
-                        lnglat: ["115.494892", "38.821458"]
-                    },
-                    {
-                        _id: 2,
-                        houseName: '房源2',
-                        houseAddress: '地址2',
-                        latitude: 38.806724,
-                        longitude: 115.469305,
-                        price: 2000,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DS.img?w=705&h=427&m=6',
-                        weight: 6,
-                        lnglat: ["115.469305", "38.806724"]
-                    },
-                    {
-                        _id: 3,
-                        houseName: '房源3',
-                        houseAddress: '地址3',
-                        latitude: 38.802145,
-                        longitude: 115.491732,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1psbUu.img?w=768&h=434&m=6',
-                        weight: 7,
-                        lnglat: ["115.491732", "38.802145"]
-                    },
-                    {
-                        _id: 4,
-                        houseName: '房源4',
-                        houseAddress: '地址4',
-                        latitude: 38.819374,
-                        longitude: 115.484915,
-                        price: 3000,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xk.img?w=743&h=476&m=6',
-                        weight: 8,
-                        lnglat: ["115.484915", "38.819374"]
-                    },
-                    {
-                        _id: 5,
-                        houseName: '房源5',
-                        houseAddress: '地址5',
-                        latitude: 38.810247,
-                        longitude: 115.477670,
-                        price: 4000,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1prVXu.img?w=768&h=429&m=6',
-                        weight: 9,
-                        lnglat: ["115.477670", "38.810247"]
-                    },
-                    {
-                        _id: 6,
-                        houseName: '房源6',
-                        houseAddress: '地址6',
-                        latitude: 38.823547,
-                        longitude: 115.477570,
-                        price: 5000,
-                        houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6',
-                        weight: 10,
-                        lnglat: ["115.477570", "38.823547"]
-                    }
-                ]
                 map.add(circle);
                 map.addControl(scale);
                 map.addControl(toolBar);
@@ -259,7 +222,7 @@
                     var borderColor = 'hsla(' + Hue + ',100%,40%,1)';
                     var shadowColor = 'hsla(' + Hue + ',100%,90%,1)';
                     div.style.backgroundColor = bgColor;
-                    var size = Math.round(30 + Math.pow(context.count / count, 1 / 5) * 20);
+                    var size = Math.round(20 + Math.pow(context.count / count, 1 / 5) * 20);
                     div.style.width = div.style.height = size + 'px';
                     div.style.border = 'solid 1px ' + borderColor;
                     div.style.borderRadius = size / 2 + 'px';
@@ -281,7 +244,7 @@
                     context.marker.setLabel({
                         direction: 'top',
                         offset: new AMap.Pixel(0, 0),
-                        content: `<div class='info1'><p>${context.data[0].houseName}</p></div>`,
+                        content: `<div class='info1'>${context.data[0].houseName}</div>`,
                     });
                     context.marker.setOffset(offset)
                 }
@@ -311,9 +274,36 @@
                 });
                 cluster.on('click', function (event) {
                     var markersInCluster = event.clusterData; // 获取聚合点中包含的所有标记
-                    console.log('聚合点中包含的标记内容:', markersInCluster);
-                    
+                    var content = `<div style="width:160px;box-sizing:border-box;">
+                        <div>
+                            <img style="width:160px;max-height:120px;" src='https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6' >   
+                        </div>
+                        <div style="width:160px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;">
+                            <span
+                            class='contentName'
+                            >${markersInCluster.length > 1 ? '多个房源' : markersInCluster[0].houseName}</span>
+                            <span
+                            class="contentInline"
+                            >
+                                <span
+                                >|</span>
+                                <span style="font-weight:bold;"> 数量:${markersInCluster.length}    
+                                </span>
+                            </span>
+                        </div>
+                        </div>`;
+                    // 设置信息窗口的内容
+                    infoWindow.setContent(content);
+
+                    // 显示信息窗口
+                    infoWindow.open(map, event.lnglat);
+
                 });
+                var infoWindow = new AMap.InfoWindow({
+                    offset: new AMap.Pixel(0, -30), // 偏移位置，使信息框出现在标记点的上方
+                    closeWhenClickMap: true, // 点击地图其他地方时关闭信息窗口
+                });
+
                 map.on("complete", function () {
                     log.success("地图加载完成！");
                 });
