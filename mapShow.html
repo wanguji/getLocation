@@ -98,15 +98,28 @@
         .info img {
             width: 60px;
         }
+
     </style>
     <script
         src="https://webapi.amap.com/maps?v=2.0&key=81a6b00d842f4e6dd307a9bbaaa2cdf2&plugin=AMap.Scale,AMap.HawkEye,AMap.ToolBar,AMap.ControlBar,AMap.MarkerClusterer"></script>
     <script src="https://cache.amap.com/lbs/static/es5.min.js"></script>
     <script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+    <script type="text/javascript" src="https://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <link rel="stylesheet" href="http://at.alicdn.com/t/c/font_4667453_phbta8s0hdm.css">
 </head>
 
 <body>
     <div id="mapContainer"></div>
+    <div class="input-card" style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 180px;">
+        <div id="pantoBtn">
+            <i class="iconfont icon-Location"></i>
+        </div>
+    </div>
+    <div class="input-card" style="height: 35px;width: 35px;display: flex;justify-content: center;align-items: center;bottom: 230px;">
+        <div id="refresh">
+            <i class="iconfont icon-shuaxin"></i>
+        </div>
+    </div>
     <script>
         function getCurrentPosition(options) {
             return new Promise((resolve, reject) => {
@@ -114,7 +127,7 @@
             });
         }
 
-        let map, cluster, infoWindow;
+        let map, cluster, infoWindow, latitude, longitude;
         let clickData
         async function initializeMap(list) {
             const position = await getCurrentPosition({
@@ -123,10 +136,10 @@
                 maximumAge: 1000
             });
             console.log(position);
-            // latitude = position.coords.latitude;
-            // longitude = position.coords.longitude;
-            let latitude = '38.813949';
-            let longitude = '115.482989';
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            // latitude = '38.813949';
+            // longitude = '115.482989';
 
             const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
 
@@ -268,6 +281,7 @@
                     });
 
                     map.on("complete", function () {
+
                         console.log("地图加载完成！");
                     });
 
@@ -287,6 +301,15 @@
             initializeMap(list);
         });
 
+        document.getElementById('pantoBtn').addEventListener('click', function () {
+            map.panTo([longitude, latitude]);
+        });
+        document.getElementById('refresh').addEventListener('click', function () {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+                reload: 200,
+                message: "地图加载完成"
+            }));
+        });
         // Initialize map with an empty list on page load
         initializeMap([]);
     </script>
