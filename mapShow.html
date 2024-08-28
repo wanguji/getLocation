@@ -115,7 +115,7 @@
         }
 
         let map, cluster, infoWindow;
-
+        let clickData
         async function initializeMap(list) {
             const position = await getCurrentPosition({
                 enableHighAccuracy: true,
@@ -231,12 +231,16 @@
                     // Handle cluster click events
                     cluster.on('click', function (event) {
                         var markersInCluster = event.clusterData;
-                        var content = `<div style="width:160px;box-sizing:border-box;">
+                        clickData = markersInCluster
+                        var content = `<div id="clusterImage" style="width:160px;box-sizing:border-box;">
                             <div>
-                                <img style="width:160px;max-height:120px;" src='https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6' >   
+                                <img style="width:160px;max-height:120px;cursor:pointer;" 
+                                    src='https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6'>   
                             </div>
                             <div style="width:160px;display:flex;justify-content:space-between;align-items:center;box-sizing:border-box;">
-                                <span class='contentName'>${markersInCluster.length > 1 ? '多个房源' : markersInCluster[0].houseName}</span>
+                                <span class='contentName'>
+                                    ${markersInCluster.length > 1 ? '多个房源' : markersInCluster[0].houseName}
+                                </span>
                                 <span class="contentInline">
                                     <span>|</span>
                                     <span style="font-weight:bold;"> 数量:${markersInCluster.length}</span>
@@ -245,7 +249,18 @@
                         </div>`;
                         infoWindow.setContent(content);
                         infoWindow.open(map, event.lnglat);
+
+                        // 为图片添加点击事件
+                        var imgElement = document.querySelector('#clusterImage');
+                        if (imgElement) {
+                            imgElement.addEventListener('click', function () {
+                                window.ReactNativeWebView.postMessage(JSON.stringify({
+                                    data: clickData
+                                }));
+                            });
+                        }
                     });
+
 
                     infoWindow = new AMap.InfoWindow({
                         offset: new AMap.Pixel(0, -30),
@@ -264,19 +279,82 @@
 
         document.addEventListener("message", function (event) {
             const data = JSON.parse(event.data);
-            window.ReactNativeWebView.postMessage(JSON.stringify({
-              test: 'testFore',
-              data: data
-            }));
+
             const list = data.list;
             console.log("Received data in WebView:", list);
 
             // Reinitialize map with new data
             initializeMap(list);
         });
-
+        let list = [
+            {
+                _id: 1,
+                houseName: '房源1房源1房源1房源1房源1房源1房源1',
+                houseAddress: '地址1',
+                latitude: 38.821458,
+                longitude: 115.494892,
+                price: 1000,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DN.img?w=768&h=489&m=6',
+                weight: 8,
+                lnglat: ["115.494892", "38.821458"]
+            },
+            {
+                _id: 2,
+                houseName: '房源2',
+                houseAddress: '地址2',
+                latitude: 38.806724,
+                longitude: 115.469305,
+                price: 2000,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps5DS.img?w=705&h=427&m=6',
+                weight: 6,
+                lnglat: ["115.469305", "38.806724"]
+            },
+            {
+                _id: 3,
+                houseName: '房源3',
+                houseAddress: '地址3',
+                latitude: 38.802145,
+                longitude: 115.491732,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1psbUu.img?w=768&h=434&m=6',
+                weight: 7,
+                lnglat: ["115.491732", "38.802145"]
+            },
+            {
+                _id: 4,
+                houseName: '房源4',
+                houseAddress: '地址4',
+                latitude: 38.819374,
+                longitude: 115.484915,
+                price: 3000,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xk.img?w=743&h=476&m=6',
+                weight: 8,
+                lnglat: ["115.484915", "38.819374"]
+            },
+            {
+                _id: 5,
+                houseName: '房源5',
+                houseAddress: '地址5',
+                latitude: 38.810247,
+                longitude: 115.477670,
+                price: 4000,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1prVXu.img?w=768&h=429&m=6',
+                weight: 9,
+                lnglat: ["115.477670", "38.810247"]
+            },
+            {
+                _id: 6,
+                houseName: '房源6',
+                houseAddress: '地址6',
+                latitude: 38.823547,
+                longitude: 115.477570,
+                price: 5000,
+                houseImg: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1ps2Xq.img?w=768&h=563&m=6',
+                weight: 10,
+                lnglat: ["115.477570", "38.823547"]
+            }
+        ]
         // Initialize map with an empty list on page load
-        initializeMap([]);
+        initializeMap(list);
     </script>
 </body>
 
