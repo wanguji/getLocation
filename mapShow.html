@@ -265,7 +265,7 @@
         document.addEventListener("message", function (event) {
             const data = JSON.parse(event.data);
             window.ReactNativeWebView.postMessage(JSON.stringify({
-              test: 'test message',
+              test: 'testFore',
               data: data
             }));
             const list = data.list;
