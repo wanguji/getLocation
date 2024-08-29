@@ -122,20 +122,6 @@
             <i class="iconfont icon-shuaxin"></i>
         </div>
     </div>
-    <div id="myPageTop">
-        <table>
-            <tr>
-                <td>
-                    <label>请输入关键字：</label>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input id="tipinput" />
-                </td>
-            </tr>
-        </table>
-    </div>
     <script>
         function getCurrentPosition(options) {
             return new Promise((resolve, reject) => {
@@ -152,10 +138,10 @@
                 maximumAge: 1000
             });
             console.log(position);
-            // latitude = position.coords.latitude;
-            // longitude = position.coords.longitude;
-            latitude = '38.813949';
-            longitude = '115.482989';
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            // latitude = '38.813949';
+            // longitude = '115.482989';
 
             const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
 
@@ -194,7 +180,6 @@
                     // Add controls
                     map.addControl(new AMap.Scale());
                     map.addControl(new AMap.ToolBar({ position: { top: '110px', right: '10px' } }));
-                    map.addControl(new AMap.HawkEye({ opened: false }));
 
                     // Add marker for current location
                     var markerContent = '<div class="custom-content-marker">' +
@@ -329,7 +314,24 @@
 
         document.addEventListener("message", function (event) {
             const data = JSON.parse(event.data);
-
+if (data.type === "findLocation") {
+                var markerContent2 = '<div class="custom-content-marker">' +
+                        '<img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
+                        '</div>';
+                var marker2 = new AMap.Marker({
+                    position: [data.longitude, data.latitude],
+                    content: markerContent2,
+                    offset: new AMap.Pixel(-13, -30)
+                });
+                marker2.setLabel({
+                    direction: 'top',
+                    offset: new AMap.Pixel(0, 0),
+                    content: `<div class='info'>${data.name}</div>`,
+                });
+                map.add(marker2);
+                map.panTo([data.longitude, data.latitude]);
+                return
+            }
             const list = data.list;
             console.log("Received data in WebView:", list);
 
