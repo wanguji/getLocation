@@ -138,10 +138,10 @@
                 maximumAge: 1000
             });
             console.log(position);
-            // latitude = position.coords.latitude;
-            // longitude = position.coords.longitude;
-            latitude = '38.813949';
-            longitude = '115.482989';
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            // latitude = '38.813949';
+            // longitude = '115.482989';
 
             const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
 
