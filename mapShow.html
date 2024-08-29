@@ -131,17 +131,17 @@
 
         let map, cluster, infoWindow, latitude, longitude;
         let clickData
-        async function initializeMap(list) {
+        async function initializeMap(data) {
             const position = await getCurrentPosition({
                 enableHighAccuracy: true,
                 timeout: 20000,
                 maximumAge: 1000
             });
             console.log(position);
-            latitude = position.coords.latitude;
-            longitude = position.coords.longitude;
-            // latitude = '38.813949';
-            // longitude = '115.482989';
+            // latitude = position.coords.latitude;
+            // longitude = position.coords.longitude;
+            latitude = '38.813949';
+            longitude = '115.482989';
 
             const convertUrl = `https://restapi.amap.com/v3/assistant/coordinate/convert?key=880a3a07f80d9e38fd41b5f96d0e3e30&locations=${longitude},${latitude}&coordsys=gps`;
 
@@ -205,10 +205,10 @@
 
 
                     // Add marker cluster
-                    cluster = new AMap.MarkerCluster(map, list, {
+                    cluster = new AMap.MarkerCluster(map, data.list, {
                         gridSize: 60,
                         renderClusterMarker: function (context) {
-                            var factor = Math.pow(context.count / list.length, 1 / 18);
+                            var factor = Math.pow(context.count / data.list.length, 1 / 18);
                             var div = document.createElement('div');
                             var Hue = 180 - factor * 180;
                             var bgColor = 'hsla(' + Hue + ',100%,40%,0.7)';
@@ -216,7 +216,7 @@
                             var borderColor = 'hsla(' + Hue + ',100%,40%,1)';
                             var shadowColor = 'hsla(' + Hue + ',100%,90%,1)';
                             div.style.backgroundColor = bgColor;
-                            var size = Math.round(20 + Math.pow(context.count / list.length, 1 / 5) * 20);
+                            var size = Math.round(20 + Math.pow(context.count / data.list.length, 1 / 5) * 20);
                             div.style.width = div.style.height = size + 'px';
                             div.style.border = 'solid 1px ' + borderColor;
                             div.style.borderRadius = size / 2 + 'px';
@@ -280,30 +280,28 @@
                         offset: new AMap.Pixel(0, -30),
                         closeWhenClickMap: true,
                     });
-                    //输入提示
-                    var autoOptions = {
-                        input: "tipinput"
-                    };
 
 
                     map.on("complete", function () {
 
                         console.log("地图加载完成！");
                     });
-                    if (AMap) {
-                        AMap.plugin(['AMap.PlaceSearch','AMap.AutoComplete'], function () {
-                            // 插件加载完成后的逻辑
-                            var auto = new AMap.AutoComplete(autoOptions);
-                            var placeSearch = new AMap.PlaceSearch({ map: map });
-                            auto.on("select", select);
-
-                            function select(e) {
-                                placeSearch.setCity(e.poi.adcode);
-                                placeSearch.search(e.poi.name);
-                            }
+                    if (data.type === "findLocation") {
+                        var markerContent2 = '<div class="custom-content-marker">' +
+                            '<img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
+                            '</div>';
+                        var marker2 = new AMap.Marker({
+                            position: [data.longitude, data.latitude],
+                            content: markerContent2,
+                            offset: new AMap.Pixel(-13, -30)
                         });
-                    } else {
-                        console.error("AMap is not defined.");
+                        marker2.setLabel({
+                            direction: 'top',
+                            offset: new AMap.Pixel(0, 0),
+                            content: `<div class='info'>${data.name}</div>`,
+                        });
+                        map.add(marker2);
+                        map.panTo([data.longitude, data.latitude]);
                     }
 
                 })
@@ -312,31 +310,16 @@
                 });
         }
 
+
         document.addEventListener("message", function (event) {
             const data = JSON.parse(event.data);
 
-            const list = data.list;
-            console.log("Received data in WebView:", list);
+            // const list = data.list;
+            // console.log("Received data in WebView:", list);
 
             // Reinitialize map with new data
-            initializeMap(list);
-            if (data.type === "findLocation") {
-                var markerContent2 = '<div class="custom-content-marker">' +
-                        '<img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
-                        '</div>';
-                var marker2 = new AMap.Marker({
-                    position: [data.longitude, data.latitude],
-                    content: markerContent2,
-                    offset: new AMap.Pixel(-13, -30)
-                });
-                marker2.setLabel({
-                    direction: 'top',
-                    offset: new AMap.Pixel(0, 0),
-                    content: `<div class='info'>${data.name}</div>`,
-                });
-                map.add(marker2);
-                map.panTo([data.longitude, data.latitude]);
-            }
+            initializeMap(data);
+            
         });
 
         document.getElementById('pantoBtn').addEventListener('click', function () {
