@@ -287,15 +287,6 @@
                         console.log("地图加载完成！");
                     });
                     if (data.type === "findLocation") {
-                        if (marker2) {
-                            map.remove(marker2);
-                        }
-                        if (circle2) {
-                            map.remove(circle2);
-                        }
-                        if (circle3) {
-                            map.remove(circle3);
-                        }
                         var markerContent2 = '<div class="custom-content-marker">' +
                             '<img src="//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png">' +
                             '</div>';
